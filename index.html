@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>EaselJS Example: Circles</title>
+
+	
+
+
+	<script type="text/javascript" src="easeljs-NEXT.min.js"></script>
+	<script type="text/javascript" src="tweenjs-NEXT.combined.js"></script>
+	        <link type="text/css" href="index.css" rel="stylesheet">
+
+
+<script id="editable">
+	var canvas;
+	var stage;
+	var tweens;
+	var activeCount;
+	var circleCount = 32;
+	var text;
+
+
+
+	function init() {
+		canvas = document.getElementById("testCanvas");
+		stage = new createjs.Stage(canvas);
+		stage.enableDOMEvents(true);
+		tweens = [];
+		stage.enableMouseOver(10);
+		createjs.Touch.enable(stage);
+
+		for (var i = 0; i < circleCount; i++) {
+			// draw the circle, and put it on stage:
+			var circle = new createjs.Shape();
+			circle.graphics.setStrokeStyle(15);
+			circle.graphics.beginFill("#bfddff");
+			circle.graphics.drawCircle(0, 0, i*2);
+			circle.alpha = 1 - i * 0.02;
+			circle.x = 0;
+			circle.y = 0 ;
+			circle.compositeOperation = "overlay";
+
+			var tween = createjs.Tween.get(circle).to({x: 0, y: 0}, (0.5 + i * 0.04) * 1500, createjs.Ease.bounceOut).call(tweenComplete);
+			tweens.push({tween: tween, ref: circle});
+			stage.addChild(circle);
+		}
+		activeCount = circleCount;
+		stage.addEventListener("stagemouseup", handleMouseUp);
+
+
+
+
+
+		createjs.Ticker.addEventListener("tick", tick);
+	}
+
+
+
+	function handleMouseUp(event) {
+
+
+	
+		for (var i = 0; i < circleCount; i++) {
+			var ref = tweens[i].ref;
+			var tween = tweens[i].tween;
+			createjs.Tween.get(ref, {override: false}).to({x: 0, y: 2000}, 0, createjs.Ease.quintOut).to({x: stage.mouseX, y: stage.mouseY}, (0.5 + i * 0.04) * 500, createjs.Ease.quintOut).to({x: 0, y: 2000}, 0, createjs.Ease.quintOut).call(tweenComplete);
+		}
+		activeCount = circleCount;
+	}
+
+	function tweenComplete() {
+		activeCount--;
+	}
+
+	function tick(event) {
+		if (activeCount) {
+			stage.update(event);
+		}
+	}
+
+</script>
+</head>
+<body onload="init();">
+
+<header>
+
+</header>
+
+<canvas id="testCanvas" width="4000" height="2000" style="background:#16264a;"></canvas>
+
+<footer>
+	 <a href="http://validator.w3.org/check?uri=referer">HTML</a>
+<a href="http://jigsaw.w3.org/css-validator/check/referer">CSS</a>
+</footer>
+</body>
+</html>
